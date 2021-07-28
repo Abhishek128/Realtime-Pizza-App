@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev" : "nodemon server.js",
+    "dev": "nodemon server.js",
     "serve": "node server.js"
   },
   "dependencies": {
@@ -13,6 +13,10 @@
     "express-ejs-layouts": "^2.5.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.12"
+    "laravel-mix": "^6.0.25",
+    "nodemon": "^2.0.12",
+    "resolve-url-loader": "4.0.0",
+    "sass": "^1.36.0",
+    "sass-loader": "12.1.0"
   }
 }
