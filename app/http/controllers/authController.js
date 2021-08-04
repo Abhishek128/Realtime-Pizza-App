@@ -2,6 +2,9 @@ const User = require('../../models/user')
 const bcryt = require('bcrypt')
 const passport = require('passport')
 function authController(){
+    const _getRedirectUrl = (req) =>{
+        return req.user.role === 'admin' ? '/admin/orders' : '/customer/order'
+    }
     
     return {
         login(req,res){
@@ -15,17 +18,17 @@ function authController(){
                 return res.redirect('/login')
             }
             passport.authenticate('local',(err,user,info)=>{
-                console.log(info)
-                console.log(err)
+                // console.log(info)
+                // console.log(err)
                 if (err) {
-                    console.log(info)
+                    // console.log(info)
                     req.flash('error',info.message)
                     return next(err)
                 }
                 if (!user){
-                    console.log(info)
-                    console.log(err)
-                    console.log(info.message)
+                    // console.log(info)
+                    // console.log(err)
+                    // console.log(info.message)
                     req.flash('error',info.message)
                     return res.redirect('/login')
                 }
@@ -34,7 +37,7 @@ function authController(){
                         req.flash('error',info.message)
                         return next(err)
                     }
-                    return res.redirect('/')
+                    return res.redirect(_getRedirectUrl(req))
                 })
             })(req,res,next)
         },

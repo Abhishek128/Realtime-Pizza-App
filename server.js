@@ -10,6 +10,7 @@ const session = require('express-session')
 const flash   = require('express-flash')
 const  MongoDbStore = require('connect-mongo')(session)
 const passport = require('passport')
+const Emitter = require('events')
 
 const url = 'mongodb://localhost/pizza'
 
@@ -32,6 +33,9 @@ const mongoStore = new MongoDbStore({
     collection : 'sessions'
 })
 
+const eventEmitter = new Emitter()
+app.set('eventEmitter',eventEmitter)
+
 app.use(session({
     secret : process.env.COOKIES_SECRET,
     resave : false ,
@@ -41,6 +45,7 @@ app.use(session({
     cookie : {maxAge : 1000*60*60*24}
 }))
 const passportInit = require('./app/config/passport')
+const { Socket } = require('dgram')
 passportInit(passport)
 app.use(passport.initialize())
 app.use(passport.session())
@@ -62,6 +67,23 @@ require('./routes/web')(app)
 
 
 app.use(express.static('public'))
-app.listen(PORT,()=>{
-    console.log(`Lisening on Port ${PORT} : http://localhost:3300`)
+const server = app.listen(PORT,()=>{
+        console.log(`Lisening on Port ${PORT} : http://localhost:3300`)
+})
+
+const io = require('socket.io')(server)
+io.on('connection',(socket)=> {
+    // console.log(socket.id)
+    socket.on('join',(orderId)=>{
+        console.log(orderId)
+        socket.join(orderId)
+
+    })
+})
+
+eventEmitter.on('orderUpdated',(data) =>{
+    io.to(`order_${data.id}`).emit('orderUpdated',data)
+})
+eventEmitter.on('orderPlaced',(data) =>{
+    io.to(`adminRoom`).emit('orderPlaced',data)
 })
