@@ -12,9 +12,9 @@ const  MongoDbStore = require('connect-mongo')(session)
 const passport = require('passport')
 const Emitter = require('events')
 
-const url = 'mongodb://localhost/pizza'
+// const url = 'mongodb://localhost/pizza'
 
-mongoose.connect(url,{
+mongoose.connect(process.env.HOST,{
     useNewUrlParser:true,
     useCreateIndex:true,
     useUnifiedTopology:true,
